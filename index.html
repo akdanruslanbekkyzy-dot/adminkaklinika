@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Улыбка | Современная клиника в Ош</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(rgba(255,255,255,0.88), rgba(255,255,255,0.88)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+    }
+    body.dark-mode {
+      background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .top-bar { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); box-shadow: 0 2px 20px rgba(0,0,0,0.06); z-index: 1000; padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    body.dark-mode .top-bar { background: rgba(20,30,45,0.96); color: white; }
+    .logo h1 { font-size: 1.8rem; color: #2c7da0; letter-spacing: -0.5px; }
+    .logo span { font-weight: 300; color: #61a5c2; }
+    .lang-switch { display: flex; gap: 12px; background: #f0f4f8; padding: 5px 12px; border-radius: 60px; }
+    body.dark-mode .lang-switch { background: #2c3e50; }
+    .lang-switch button { background: #2c7da0; border: none; font-size: 15px; font-weight: 600; padding: 6px 20px; border-radius: 40px; cursor: pointer; color: white; transition: 0.2s; }
+    .menu-toggle { background: #2c7da0; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .sidebar { position: fixed; left: -300px; top: 0; width: 300px; height: 100%; background: white; box-shadow: 2px 0 20px rgba(0,0,0,0.1); z-index: 1100; transition: left 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1); padding: 70px 20px 30px; overflow-y: auto; }
+    body.dark-mode .sidebar { background: #1e2a3a; color: #f0f0f0; }
+    .sidebar.active { left: 0; }
+    .sidebar-close { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 24px; font-weight: bold; color: #2c7da0; }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1050; opacity: 0; visibility: hidden; transition: 0.3s; }
+    .overlay.active { opacity: 1; visibility: visible; }
+    .sidebar button { width: 100%; background: none; border: none; padding: 14px 16px; text-align: left; font-size: 16px; font-weight: 500; cursor: pointer; border-radius: 40px; display: flex; align-items: center; gap: 12px; color: #1f2a3a; }
+    body.dark-mode .sidebar button { color: #e0e0e0; }
+    .sidebar button:hover { background: #e9f0f9; transform: translateX(5px); }
+    .conteudo { max-width: 1300px; margin: 100px auto 40px; background: rgba(255,255,255,0.92); backdrop-filter: blur(4px); border-radius: 36px; padding: 40px 45px; box-shadow: 0 20px 35px rgba(0,0,0,0.1); transition: 0.3s; }
+    body.dark-mode .conteudo { background: rgba(25,35,50,0.92); color: #f1f5f9; }
+    .doctors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 30px; margin: 40px 0; }
+    .doctor-card { background: white; border-radius: 28px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.08); transition: 0.2s; }
+    body.dark-mode .doctor-card { background: #2d3e4e; color: white; }
+    .doctor-card img { width: 160px; height: 160px; object-fit: cover; border-radius: 50%; border: 3px solid #2c7da0; margin-bottom: 15px; }
+    .doctor-card button { margin-top: 10px; }
+    .patients-table { width: 100%; border-collapse: collapse; margin: 20px 0; border-radius: 20px; overflow: hidden; }
+    .patients-table th, .patients-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
+    .patients-table th { background: #2c7da0; color: white; }
+    .patient-row { cursor: pointer; transition: 0.1s; }
+    .patient-row:hover { background: rgba(44,125,160,0.1); }
+    .services-table { width: 100%; border-collapse: collapse; margin: 30px 0; border-radius: 20px; overflow: hidden; }
+    .services-table th, .services-table td { padding: 15px 20px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
+    .services-table th { background: #2c7da0; color: white; }
+    .price { font-weight: 700; color: #2c7da0; }
+    input, select, textarea { width: 100%; padding: 12px; margin: 8px 0 16px; border-radius: 20px; border: 1px solid #ccc; background: white; }
+    body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background: #2d3e4e; color: white; border-color: #5a7c9a; }
+    button { background: #2c7da0; color: white; border: none; padding: 10px 24px; border-radius: 40px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    button.danger { background: #c0392b; }
+    button.warning { background: #e67e22; }
+    button.success { background: #27ae60; }
+    .modern-footer { background: #1e2f3c; color: #e2e8f0; border-radius: 32px 32px 0 0; margin-top: 60px; padding: 40px 45px 25px; transition: 0.2s; }
+    body.dark-mode .modern-footer { background: #0f1a24; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 35px; margin-bottom: 30px; }
+    .footer-col h4 { color: #61a5c2; margin-bottom: 18px; font-size: 1.2rem; }
+    .footer-col p, .footer-col a { color: #cbd5e6; text-decoration: none; display: block; margin-bottom: 10px; font-size: 0.9rem; }
+    .room-card { background: white; border-radius: 24px; padding: 20px; margin: 15px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    body.dark-mode .room-card { background: #2d3e4e; }
+    .profile-card { background: rgba(44,125,160,0.15); border-radius: 28px; padding: 25px; margin-bottom: 25px; }
+    .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1200; }
+    .modal-content { background: white; max-width: 550px; width: 90%; border-radius: 32px; padding: 28px; max-height: 90vh; overflow-y: auto; }
+    body.dark-mode .modal-content { background: #1e2a3a; color: white; }
+    .img-preview { display: flex; gap: 15px; margin: 12px 0; flex-wrap: wrap; }
+    .img-preview img { width: 100px; height: 70px; object-fit: cover; border-radius: 12px; border: 1px solid #ccc; }
+    .auth-container { position: fixed; top:0; left:0; width:100%; height:100%; background:#2c7da0; display:flex; align-items:center; justify-content:center; z-index:9999; }
+    .auth-card { background:white; padding:30px; border-radius:20px; width:380px; text-align:center; box-shadow:0 20px 30px rgba(0,0,0,0.2); }
+    body.dark-mode .auth-card { background:#1e2a3a; color:white; }
+    .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: linear-gradient(135deg, #2c7da0, #61a5c2); padding: 20px; border-radius: 24px; color: white; text-align: center; }
+    .stat-card h3 { font-size: 2rem; margin-bottom: 8px; }
+    .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0; }
+    .theme-toggle { position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px; background: #2c7da0; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1050; border: none; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+<div class="top-bar"><div class="logo"><h1>Улыбка <span>клиника</span></h1></div><div class="lang-switch"><button id="langRu">РУ</button><button id="langKg">КГ</button></div><button id="menuToggle" class="menu-toggle"><span class="material-icons">menu</span> Меню</button></div>
+<div class="container"><aside class="sidebar" id="sidebar"><div class="sidebar-close" id="closeSidebarBtn">✕</div><h2 style="color:#2c7da0; margin-bottom:20px;">Улыбка</h2><div id="sidebarMenu"></div></aside><main class="conteudo" id="conteudo"></main></div>
+<div id="overlay" class="overlay"></div>
+
+<footer class="modern-footer">
+  <div class="footer-grid">
+    <div class="footer-col"><h4>Улыбка</h4><p>Современная клиника в Оше с 2010 года. Забота и профессионализм.</p></div>
+    <div class="footer-col"><h4>Услуги</h4><p>Консультация врача</p><p>УЗИ диагностика</p><p>Лаборатория</p><p>Стационар</p></div>
+    <div class="footer-col"><h4>Контакты</h4><p>📍 ул. Курманжан Датка, 45, Ош</p><p>📞 +996 (3222) 6-77-88</p><p>✉️ info@ulybka.kg</p><p>🕒 24/7, без выходных</p></div>
+    <div class="footer-col footer-map"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2925.238967476777!2d72.795515!3d40.513485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38b5b3f5c2b4e1b3%3A0x5c6a8f2e7d9c1a4b!2z0J7Ri9GB0LrQsNGPINC80LXRgdGC0L3QsNGPINCR0L7Qu9GM0L3QuNGG0LA!5e0!3m2!1sru!2skg!4v1710000000000" allowfullscreen="" loading="lazy"></iframe></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Клиника «Улыбка» — все права защищены.</p></div>
+</footer>
+
+<button id="themeToggleBtn" class="theme-toggle"><span class="material-icons">wb_sunny</span></button>
+
+<script>
+// ========== ДАННЫЕ ==========
+const translations = { 
+  ru: { home_title: "Добро пожаловать в клинику «Улыбка»", services_title: "Услуги и цены", rooms_title: "Палаты и места", nav_home: "🏠 О клинике", nav_services: "📋 Услуги", nav_rooms: "🏨 Палаты", nav_profile: "👤 Кабинет", nav_export: "📄 Печать списка", nav_admin: "⚙️ Админ-панель", logout: "Выход", patients_list: "📋 Список пациентов", back_btn: "Назад", appointments: "Мои записи", admin_title: "Панель администратора", admin_users: "👥 Управление пользователями", admin_services: "📋 Управление услугами", admin_rooms: "🏨 Управление палатами", admin_stats: "📊 Статистика", reg_success: "✅ Регистрация успешна! Теперь войдите.", fill_fields: "❌ Заполните ФИО и пароль", wrong_creds: "❌ Неверный логин или пароль", login_needed: "Войдите как клиент" },
+  kg: { home_title: "«Улыбка» клиникасына кош келиңиз", services_title: "Кызматтар жана баа", rooms_title: "Палаталар жана орундар", nav_home: "🏠 Клиника жөнүндө", nav_services: "📋 Кызматтар", nav_rooms: "🏨 Палаталар", nav_profile: "👤 Кабинет", nav_export: "📄 Тизмени басып чыгаруу", nav_admin: "⚙️ Админ-панель", logout: "Чыгуу", patients_list: "📋 Бейтаптар тизмеси", back_btn: "Артка", appointments: "Жазууларым", admin_title: "Администратор панели", admin_users: "👥 Колдонуучуларды башкаруу", admin_services: "📋 Кызматтарды башкаруу", admin_rooms: "🏨 Палаталарды башкаруу", admin_stats: "📊 Статистика", reg_success: "✅ Каттоо ийгиликтүү! Эми кириңиз.", fill_fields: "❌ Аты-жөнүңүздү жана сырсөзүңүздү толтуруңуз", wrong_creds: "❌ Туура эмес логин же сырсөз", login_needed: "Клиент катары кириңиз" } 
+};
+
+let currentLang = localStorage.getItem("lang") || "ru";
+let currentUser = JSON.parse(sessionStorage.getItem("clinic_current_user")) || null;
+let clientsDB = JSON.parse(localStorage.getItem("clinic_clients")) || [];
+let roomsData = JSON.parse(localStorage.getItem("clinic_rooms")) || [
+  { id: 1, name: "Палата №1", total: 10, occupied: 3 },
+  { id: 2, name: "Палата №2", total: 10, occupied: 5 },
+  { id: 3, name: "VIP Люкс", total: 1, occupied: 0 }
+];
+let servicesData = JSON.parse(localStorage.getItem("clinic_services")) || [
+  { id: 1, name: "Консультация врача", price: 500 },
+  { id: 2, name: "УЗИ диагностика", price: 800 },
+  { id: 3, name: "Лабораторные анализы", price: 350 },
+  { id: 4, name: "Рентген", price: 600 },
+  { id: 5, name: "Стоматология", price: 1200 }
+];
+
+const doctorsList = [
+  { id: 1, name: "Айжан Асанова", specialty: "Главный терапевт", img: "https://randomuser.me/api/portraits/women/68.jpg" },
+  { id: 2, name: "Бакыт Касымов", specialty: "Кардиолог", img: "https://randomuser.me/api/portraits/men/32.jpg" },
+  { id: 3, name: "Нурила Абдиева", specialty: "Педиатр", img: "https://randomuser.me/api/portraits/women/44.jpg" },
+  { id: 4, name: "Эрмек Шералиев", specialty: "Нейрохирург", img: "https://randomuser.me/api/portraits/men/75.jpg" }
+];
+
+const employees = [
+  { login: "акдана", password: "2007", name: "Акдана Администратор", role: "admin" },
+  { login: "medic1", password: "1234", name: "Айгуль Медсестра", role: "nurse" }
+];
+
+function t(key) { return translations[currentLang][key] || key; }
+
+// ========== ТЕМНАЯ ТЕМА ==========
+function initTheme() { if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark-mode"); }
+function toggleTheme() { document.body.classList.toggle("dark-mode"); localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light"); }
+document.getElementById("themeToggleBtn").addEventListener("click", toggleTheme);
+initTheme();
+
+function setLang(lang) { currentLang = lang; localStorage.setItem("lang", lang); if (currentUser) renderPage(window.currentPage || "home"); else showAuthScreen(); }
+document.getElementById("langRu").onclick = () => setLang("ru");
+document.getElementById("langKg").onclick = () => setLang("kg");
+
+// ========== ЭКСПОРТ ==========
+window.exportPacientesPDF = function() {
+  const printWindow = window.open('', '_blank');
+  let html = `<html><head><title>Пациенты</title><style>body{font-family:sans-serif;} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:8px;text-align:left}</style></head><body>
+    <h2>Клиника Улыбка: Список пациентов</h2>
+    <table><thead><tr><th>ФИО</th><th>ИНН</th><th>Дата рождения</th><th>ID номер</th></tr></thead><tbody>`;
+  clientsDB.forEach(p => { html += `<tr><td>${p.fullName || ''}</td><td>${p.inn || '—'}</td><td>${p.birthDate || '—'}</td><td>${p.idNumber || 'ID'+p.id}</td></tr>`; });
+  html += `</tbody></table></body></html>`;
+  printWindow.document.write(html);
+  printWindow.document.close();
+  setTimeout(() => printWindow.print(), 300);
+};
+
+// ========== АДМИН ФУНКЦИИ ==========
+window.deleteUser = function(userId) {
+  if(confirm("Удалить пользователя?")) {
+    clientsDB = clientsDB.filter(u => u.id != userId);
+    localStorage.setItem("clinic_clients", JSON.stringify(clientsDB));
+    renderPage("adminUsers");
+  }
+};
+
+window.deleteService = function(serviceId) {
+  if(confirm("Удалить услугу?")) {
+    servicesData = servicesData.filter(s => s.id != serviceId);
+    localStorage.setItem("clinic_services", JSON.stringify(servicesData));
+    renderPage("adminServices");
+  }
+};
+
+window.showAddServiceModal = function() {
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>➕ Добавить услугу</h3>
+    <label>Название:</label><input id="newServiceName" placeholder="Название услуги">
+    <label>Цена (сом):</label><input id="newServicePrice" type="number" placeholder="Цена">
+    <div class="btn-group"><button onclick="addService()">Сохранить</button><button onclick="this.closest('.modal').remove()">Отмена</button></div></div>`;
+  document.body.appendChild(modal);
+};
+
+window.addService = function() {
+  const name = document.getElementById("newServiceName")?.value.trim();
+  const price = parseInt(document.getElementById("newServicePrice")?.value);
+  if(!name || isNaN(price)) { alert("Заполните все поля"); return; }
+  const newId = Date.now();
+  servicesData.push({ id: newId, name, price });
+  localStorage.setItem("clinic_services", JSON.stringify(servicesData));
+  document.querySelector('.modal')?.remove();
+  renderPage("adminServices");
+};
+
+window.showEditServiceModal = function(serviceId) {
+  const service = servicesData.find(s => s.id == serviceId);
+  if(!service) return;
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>✏️ Редактировать услугу</h3>
+    <label>Название:</label><input id="editServiceName" value="${service.name}">
+    <label>Цена (сом):</label><input id="editServicePrice" type="number" value="${service.price}">
+    <div class="btn-group"><button onclick="updateService(${serviceId})">Обновить</button><button onclick="this.closest('.modal').remove()">Отмена</button></div></div>`;
+  document.body.appendChild(modal);
+};
+
+window.updateService = function(serviceId) {
+  const name = document.getElementById("editServiceName")?.value.trim();
+  const price = parseInt(document.getElementById("editServicePrice")?.value);
+  if(!name || isNaN(price)) { alert("Заполните все поля"); return; }
+  const index = servicesData.findIndex(s => s.id == serviceId);
+  if(index !== -1) { servicesData[index] = { ...servicesData[index], name, price }; localStorage.setItem("clinic_services", JSON.stringify(servicesData)); }
+  document.querySelector('.modal')?.remove();
+  renderPage("adminServices");
+};
+
+window.showEditRoomModal = function(roomId) {
+  const room = roomsData.find(r => r.id == roomId);
+  if(!room) return;
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>✏️ Редактировать палату</h3>
+    <label>Название:</label><input id="editRoomName" value="${room.name}">
+    <label>Всего мест:</label><input id="editRoomTotal" type="number" value="${room.total}">
+    <label>Занято мест:</label><input id="editRoomOccupied" type="number" value="${room.occupied}">
+    <div class="btn-group"><button onclick="updateRoom(${roomId})">Обновить</button><button onclick="this.closest('.modal').remove()">Отмена</button></div></div>`;
+  document.body.appendChild(modal);
+};
+
+window.updateRoom = function(roomId) {
+  const name = document.getElementById("editRoomName")?.value.trim();
+  const total = parseInt(document.getElementById("editRoomTotal")?.value);
+  const occupied = parseInt(document.getElementById("editRoomOccupied")?.value);
+  if(!name || isNaN(total) || isNaN(occupied)) { alert("Заполните все поля"); return; }
+  const index = roomsData.findIndex(r => r.id == roomId);
+  if(index !== -1) { roomsData[index] = { ...roomsData[index], name, total, occupied }; localStorage.setItem("clinic_rooms", JSON.stringify(roomsData)); }
+  document.querySelector('.modal')?.remove();
+  renderPage("adminRooms");
+};
+
+// ========== ОТРИСОВКА СТРАНИЦ ==========
+window.currentPage = "home";
+window.renderPage = function(page) {
+  window.currentPage = page;
+  const container = document.getElementById("conteudo");
+  if(!container) return;
+  const isAdmin = currentUser?.type === 'employee' && currentUser?.role === 'admin';
+  
+  if(page === "home") {
+    container.innerHTML = `<h1>🏥 ${t('home_title')}</h1><div class="doctors-grid" id="doctorsContainer"></div>`;
+    document.getElementById("doctorsContainer").innerHTML = doctorsList.map(d => `<div class="doctor-card"><img src="${d.img}"><h3>${d.name}</h3><p>${d.specialty}</p><button onclick="openBookingModal(${d.id})">📅 Записаться</button></div>`).join('');
+  } 
+  else if(page === "services") {
+    container.innerHTML = `<h2>📋 ${t('services_title')}</h2><table class="services-table"><tr><th>Услуга</th><th>Цена</th></tr>${servicesData.map(s => `<tr><td>${s.name}</td><td class="price">${s.price} сом</td></tr>`).join('')}</table>`;
+  } 
+  else if(page === "rooms") {
+    container.innerHTML = `<h2>🏨 ${t('rooms_title')}</h2>` + roomsData.map(r => `<div class="room-card"><div><strong>${r.name}</strong> (Свободно: ${r.total - r.occupied}/${r.total})</div>${currentUser?.type === 'client' ? `<button onclick="bookRoom(${r.id})" ${r.occupied >= r.total ? 'disabled':''}>Занять место</button>` : ''}</div>`).join('');
+  } 
+  else if(page === "profile") {
+    let name = currentUser.type === 'client' ? (clientsDB.find(c => c.id == currentUser.id)?.fullName || "Пациент") : currentUser.name;
+    container.innerHTML = `<div class="profile-card"><h2>👤 ${t('nav_profile')}</h2><p>Пользователь: ${name}</p>
+      ${currentUser.type === 'client' ? '<button onclick="renderPage(\'clientAppointments\')">📅 Мои записи</button><br><br>' : ''}
+      ${isAdmin ? `<div class="btn-group"><button onclick="renderPage('adminPanel')">⚙️ ${t('nav_admin')}</button></div><br>` : ''}
+      <button onclick="logout()">${t('logout')}</button></div>`;
+  }
+  else if(page === "adminPanel") {
+    if(!isAdmin) { renderPage("home"); return; }
+    const totalPatients = clientsDB.length;
+    const totalAppointments = clientsDB.reduce((sum, c) => sum + (c.appointments?.length || 0), 0);
+    const totalRooms = roomsData.length;
+    const totalServices = servicesData.length;
+    container.innerHTML = `<h2>⚙️ ${t('admin_title')}</h2>
+      <div class="admin-stats"><div class="stat-card"><h3>${totalPatients}</h3><p>Пациентов</p></div>
+      <div class="stat-card"><h3>${totalAppointments}</h3><p>Записей</p></div>
+      <div class="stat-card"><h3>${totalRooms}</h3><p>Палат</p></div>
+      <div class="stat-card"><h3>${totalServices}</h3><p>Услуг</p></div></div>
+      <div class="btn-group"><button onclick="renderPage('adminUsers')">👥 ${t('admin_users')}</button>
+      <button onclick="renderPage('adminServices')">📋 ${t('admin_services')}</button>
+      <button onclick="renderPage('adminRooms')">🏨 ${t('admin_rooms')}</button>
+      <button onclick="renderPage('adminAppointments')">📅 Все записи</button>
+      <button onclick="exportPacientesPDF()">📄 ${t('nav_export')}</button></div>
+      <button onclick="renderPage('profile')" style="margin-top:20px;">← ${t('back_btn')}</button>`;
+  }
+  else if(page === "adminUsers") {
+    if(!isAdmin) { renderPage("home"); return; }
+    container.innerHTML = `<h2>👥 ${t('admin_users')}</h2>
+      ${clientsDB.length === 0 ? '<p>Нет зарегистрированных пациентов</p>' : 
+      `<table class="patients-table"><thead><tr><th>ФИО</th><th>ИНН</th><th>Дата рожд.</th><th>Действия</th></tr></thead><tbody>
+      ${clientsDB.map(p => `<tr><td>${p.fullName || ''}</td><td>${p.inn || '—'}</td><td>${p.birthDate || '—'}</td><td><button class="warning" onclick="viewPatientDetails(${p.id})">👁️</button> <button class="danger" onclick="deleteUser(${p.id})">🗑️</button></td></tr>`).join('')}</tbody></table>`}
+      <button onclick="renderPage('adminPanel')">← ${t('back_btn')}</button>`;
+  }
+  else if(page === "adminServices") {
+    if(!isAdmin) { renderPage("home"); return; }
+    container.innerHTML = `<h2>📋 ${t('admin_services')}</h2>
+      <button onclick="showAddServiceModal()" class="success" style="margin-bottom:20px;">➕ Добавить услугу</button>
+      <table class="services-table"><thead><tr><th>Услуга</th><th>Цена</th><th>Действия</th></tr></thead><tbody>
+      ${servicesData.map(s => `<tr><td>${s.name}</td><td>${s.price} сом</td><td><button class="warning" onclick="showEditServiceModal(${s.id})">✏️</button> <button class="danger" onclick="deleteService(${s.id})">🗑️</button></td></tr>`).join('')}</tbody></table>
+      <button onclick="renderPage('adminPanel')">← ${t('back_btn')}</button>`;
+  }
+  else if(page === "adminRooms") {
+    if(!isAdmin) { renderPage("home"); return; }
+    container.innerHTML = `<h2>🏨 ${t('admin_rooms')}</h2>
+      ${roomsData.map(r => `<div class="room-card"><div><strong>${r.name}</strong><br>Всего: ${r.total}, Занято: ${r.occupied}</div><div><button class="warning" onclick="showEditRoomModal(${r.id})">✏️ Редактировать</button></div></div>`).join('')}
+      <button onclick="renderPage('adminPanel')">← ${t('back_btn')}</button>`;
+  }
+  else if(page === "adminAppointments") {
+    if(!isAdmin) { renderPage("home"); return; }
+    let allAppointments = [];
+    clientsDB.forEach(client => {
+      if(client.appointments) {
+        client.appointments.forEach(app => { allAppointments.push({ ...app, patientName: client.fullName }); });
+      }
+    });
+    container.innerHTML = `<h2>📅 Все записи</h2>
+      ${allAppointments.length ? allAppointments.map(a => `<div class="room-card"><strong>👤 ${a.patientName}</strong><br>${a.type === 'room' ? '🏨 Палата: ' + a.roomName : '👨‍⚕️ ' + a.doctorName}<br>📅 ${a.date} ${a.time ? '⏰ '+a.time : ''}</div>`).join('') : '<p>Нет записей</p>'}
+      <button onclick="renderPage('adminPanel')">← ${t('back_btn')}</button>`;
+  }
+  else if(page === "clientAppointments") {
+    let client = clientsDB.find(c => c.id == currentUser.id);
+    let apps = client?.appointments || [];
+    container.innerHTML = `<h2>📅 ${t('appointments')}</h2>` + (apps.length ? apps.map(a => `<div class="room-card">${a.type === 'room' ? '🏨 Палата: ' + a.roomName : '👨‍⚕️ ' + a.doctorName}<br>📅 ${a.date} ${a.time ? '⏰ '+a.time : ''}</div>`).join('') : '<p>Нет записей</p>') + `<button onclick="renderPage('profile')">${t('back_btn')}</button>`;
+  }
+  updateSidebar();
+};
+
+function updateSidebar() {
+  let menu = document.getElementById("sidebarMenu");
+  if(!menu) return;
+  const isAdmin = currentUser?.type === 'employee' && currentUser?.role === 'admin';
+  menu.innerHTML = `<button onclick="renderPage('home')">${t('nav_home')}</button>
+    <button onclick="renderPage('services')">${t('nav_services')}</button>
+    <button onclick="renderPage('rooms')">${t('nav_rooms')}</button>
+    ${currentUser ? `<button onclick="renderPage('profile')">${t('nav_profile')}</button>` : ''}
+    ${isAdmin ? `<button onclick="renderPage('adminPanel')">${t('nav_admin')}</button>` : ''}
+    ${currentUser?.type === 'employee' && !isAdmin ? `<button onclick="exportPacientesPDF()">${t('nav_export')}</button>` : ''}`;
+}
+
+// ========== ЗАПИСЬ ==========
+window.openBookingModal = function(doctorId) {
+  if(!currentUser || currentUser.type !== 'client') { alert(t('login_needed')); return; }
+  const dr = doctorsList.find(d => d.id === doctorId);
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>Запись: ${dr.name}</h3><label>Дата:</label><input type="date" id="bookDate" min="${new Date().toISOString().split('T')[0]}"><label>Время:</label><input type="time" id="bookTime"><div class="btn-group" style="margin-top:15px;"><button onclick="confirmBooking(${doctorId})">Ок</button><button style="background:#ccc" onclick="this.closest('.modal').remove()">Отмена</button></div></div>`;
+  document.body.appendChild(modal);
+};
+window.confirmBooking = function(doctorId) {
+  const date = document.getElementById('bookDate').value;
+  const time = document.getElementById('bookTime').value;
+  if(!date || !time) { alert("Укажите дату и время"); return; }
+  const dr = doctorsList.find(d => d.id === doctorId);
+  let client = clientsDB.find(c => c.id == currentUser.id);
+  if(client) {
+    client.appointments = client.appointments || [];
+    client.appointments.push({ type: "doctor", doctorName: dr.name, date: date, time: time });
+    localStorage.setItem("clinic_clients", JSON.stringify(clientsDB));
+    alert("✅ Запись создана!");
+    document.querySelector('.modal')?.remove();
+  }
+};
+window.bookRoom = function(roomId) {
+  if(!currentUser || currentUser.type !== 'client') { alert(t('login_needed')); return; }
+  const room = roomsData.find(r => r.id === roomId);
+  if(room.occupied >= room.total) { alert("Нет свободных мест"); return; }
+  room.occupied++;
+  localStorage.setItem("clinic_rooms", JSON.stringify(roomsData));
+  let client = clientsDB.find(c => c.id == currentUser.id);
+  if(client) {
+    client.appointments = client.appointments || [];
+    client.appointments.push({ type: "room", roomName: room.name, date: new Date().toLocaleDateString() });
+    localStorage.setItem("clinic_clients", JSON.stringify(clientsDB));
+  }
+  renderPage("rooms");
+  alert("✅ Палата забронирована");
+};
+
+window.viewPatientDetails = function(patientId) {
+  const p = clientsDB.find(p => p.id == patientId);
+  if(!p) return;
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>${p.fullName}</h3><p><strong>ИНН:</strong> ${p.inn || '—'}</p><p><strong>Дата рождения:</strong> ${p.birthDate || '—'}</p><p><strong>ID номер:</strong> ${p.idNumber || '—'}</p>
+    <div><strong>Паспорт (лицевая):</strong><br>${p.passportFront ? `<img src="${p.passportFront}" style="max-width:200px; border-radius:12px; margin-top:5px;">` : '—'}</div>
+    <div style="margin-top:10px;"><strong>Паспорт (оборот):</strong><br>${p.passportBack ? `<img src="${p.passportBack}" style="max-width:200px; border-radius:12px;">` : '—'}</div>
+    <button onclick="this.closest('.modal').remove()" style="margin-top:20px;">Закрыть</button></div>`;
+  document.body.appendChild(modal);
+};
+
+// ========== РЕГИСТРАЦИЯ ==========
+function fileToBase64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+}
+
+window.showRegistrationModal = function() {
+  const modal = document.createElement('div'); modal.className = 'modal';
+  modal.innerHTML = `<div class="modal-content"><h3>📝 Регистрация пациента</h3>
+    <label>ФИО (будет использоваться как логин):</label><input id="regFullName" placeholder="Иванов Иван Иванович">
+    <label>ИНН (персональный номер):</label><input id="regInn" placeholder="12345678901234">
+    <label>Дата рождения:</label><input id="regBirth" type="date">
+    <label>Пароль:</label><input id="regPass" type="password">
+    <label>📸 Фото паспорта (лицевая сторона):</label><input type="file" id="passFront" accept="image/*">
+    <label>📸 Фото паспорта (обратная сторона):</label><input type="file" id="passBack" accept="image/*">
+    <div id="previewImg" class="img-preview"></div>
+    <button id="doRegisterBtn" style="margin-top:10px;">✅ Зарегистрироваться</button>
+    <button onclick="this.closest('.modal').remove()" style="background:#666">Отмена</button></div>`;
+  document.body.appendChild(modal);
+  
+  let frontFile = null, backFile = null;
+  const preview = document.getElementById("previewImg");
+  const frontInput = document.getElementById("passFront");
+  const backInput = document.getElementById("passBack");
+  
+  if(frontInput) frontInput.onchange = (e) => { frontFile = e.target.files[0]; updatePreview(); };
+  if(backInput) backInput.onchange = (e) => { backFile = e.target.files[0]; updatePreview(); };
+  
+  function updatePreview() {
+    if(preview) {
+      preview.innerHTML = "";
+      if(frontFile) { let img = document.createElement("img"); img.src = URL.createObjectURL(frontFile); preview.appendChild(img); }
+      if(backFile) { let img = document.createElement("img"); img.src = URL.createObjectURL(backFile); preview.appendChild(img); }
+    }
+  }
+  
+  const regBtn = document.getElementById("doRegisterBtn");
+  if(regBtn) {
+    regBtn.onclick = async () => {
+      const fullName = document.getElementById("regFullName").value.trim();
+      const inn = document.getElementById("regInn").value.trim();
+      const birthDate = document.getElementById("regBirth").value;
+      const password = document.getElementById("regPass").value;
+      if(!fullName || !password) { alert(t('fill_fields')); return; }
+      
+      // Проверка на существующего пользователя
+      if(clientsDB.some(c => c.fullName === fullName)) {
+        alert("Пользователь с таким ФИО уже существует!");
+        return;
+      }
+      
+      let front64 = "", back64 = "";
+      if(frontFile) front64 = await fileToBase64(frontFile);
+      if(backFile) back64 = await fileToBase64(backFile);
+      const newId = Date.now();
+      clientsDB.push({ 
+        id: newId, 
+        fullName, 
+        inn, 
+        birthDate, 
+        password, 
+        passportFront: front64, 
+        passportBack: back64, 
+        appointments: [], 
+        idNumber: "PAT" + newId 
+      });
+      localStorage.setItem("clinic_clients", JSON.stringify(clientsDB));
+      alert(t('reg_success'));
+      modal.remove();
+      // Обновляем экран авторизации
+      showAuthScreen();
+    };
+  }
+};
+
+// ========== АВТОРИЗАЦИЯ ==========
+function showAuthScreen() {
+  // Сохраняем footer
+  const existingFooter = document.querySelector('.modern-footer');
+  
+  document.body.innerHTML = `
+    <div class="auth-container">
+      <div class="auth-card">
+        <h2 style="color:#2c7da0;">🏥 Улыбка</h2>
+        <p style="margin-bottom:15px; color:#666;">Вход в систему</p>
+        <input id="loginName" placeholder="Логин (ФИО или 'акдана')" style="margin-top:15px; width:100%;">
+        <input id="loginPass" type="password" placeholder="Пароль" style="width:100%;">
+        <button onclick="handleLogin()" style="width:100%; margin-top:10px;">Войти</button>
+        <hr style="margin:15px 0;">
+        <button onclick="showRegistrationModal()" style="background:#61a5c2; width:100%;">📝 Регистрация (пациент)</button>
+        <p style="margin-top:15px; font-size:12px; color:#888;">👨‍⚕️ Для админа: акдана / 2007</p>
+      </div>
+    </div>`;
+  
+  // Восстанавливаем footer
+  if(existingFooter) {
+    document.body.appendChild(existingFooter);
+  } else {
+    const footer = document.createElement('footer');
+    footer.className = 'modern-footer';
+    footer.innerHTML = `<div class="footer-grid"><div class="footer-col"><h4>Улыбка</h4><p>Современная клиника в Оше.</p></div><div class="footer-col"><h4>Контакты</h4><p>📍 ул. Курманжан Датка, 45, Ош</p><p>📞 +996 (3222) 6-77-88</p></div></div><div class="footer-bottom"><p>© 2026 Клиника «Улыбка»</p></div>`;
+    document.body.appendChild(footer);
+  }
+}
+
+window.handleLogin = function() {
+  const login = document.getElementById("loginName").value;
+  const pass = document.getElementById("loginPass").value;
+  let emp = employees.find(e => e.login === login && e.password === pass);
+  if(emp) { 
+    currentUser = { type: "employee", login: emp.login, name: emp.name, role: emp.role }; 
+  }
+  else {
+    let client = clientsDB.find(c => c.fullName === login && c.password === pass);
+    if(client) currentUser = { type: "client", id: client.id };
+  }
+  if(currentUser) { 
+    sessionStorage.setItem("clinic_current_user", JSON.stringify(currentUser)); 
+    location.reload(); 
+  }
+  else alert(t('wrong_creds'));
+};
+
+window.logout = function() { sessionStorage.removeItem("clinic_current_user"); location.reload(); };
+
+// ========== МЕНЮ ==========
+const menuBtn = document.getElementById("menuToggle");
+const sidebar = document.getElementById("sidebar");
+const closeBtn = document.getElementById("closeSidebarBtn");
+const overlay = document.getElementById("overlay");
+
+if(menuBtn) menuBtn.onclick = () => { sidebar.classList.add("active"); overlay.classList.add("active"); };
+if(closeBtn) closeBtn.onclick = () => { sidebar.classList.remove("active"); overlay.classList.remove("active"); };
+if(overlay) overlay.onclick = () => { sidebar.classList.remove("active"); overlay.classList.remove("active"); };
+
+// ЗАПУСК
+if(!currentUser) { 
+  showAuthScreen(); 
+} else { 
+  renderPage("home"); 
+}
+</script>
+</body>
+</html>
